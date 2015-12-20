@@ -4,6 +4,7 @@ from flask import Flask
 from flask import request
 
 # Move to the directory that contains the interfacing script to import it
+# (I'm actually pretty proud of this line because it means I can call server.py from anywhere)
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','peer-mentoring-app-interface'))
 import myscript
 
