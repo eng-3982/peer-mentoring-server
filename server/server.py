@@ -1,6 +1,12 @@
-import myscript
+import sys
+import os
 from flask import Flask
 from flask import request
+
+# Move to the directory that contains the interfacing script to import it
+sys.path.append(os.path.join(os.path.dirname(__file__),'..','peer-mentoring-app-interface'))
+import myscript
+
 
 app = Flask(__name__)
 
