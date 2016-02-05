@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 from flask import jsonify
 from pymongo import MongoClient
