@@ -12,24 +12,29 @@ import myscript
 #
 app = Flask(__name__)
 
+# Default URL operations
+#
 @app.route('/')
 def home_page():
-    return 'Welcome to Peer-Mentoring App'
+    # Print simple welcome message
+    #
+    return 'Welcome to Peer-Mentoring App\n'
 
-@app.route('/data', methods=['POST', 'GET'])
+@app.route('/data/', methods=['POST', 'GET'])
 def data():
-   # print "Welcome to data"
+    
+    # Data directory welcome message
+    #
+    print "Welcome to data"
+
     if request.method == 'GET':
-    #    print "Get method"
-        return myscript.data()
+        return  myscript.data()
+
     else:
-        #print request.form['name']
-        print request.form['major']
-        new_major = request.form['major']
-        #new_name =  request.form['name']
-        y = myscript.post(new_major)
-        return y 
+        # Print the info trying to be posted
+        #
+        return request.get_json()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=debug=True)
+    app.run(host='0.0.0.0', port=22000, debug=True)
     

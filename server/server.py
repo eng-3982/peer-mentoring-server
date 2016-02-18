@@ -18,7 +18,7 @@ def home_page():
 
 @app.route('/data', methods=['POST', 'GET'])
 def data():
-   # print "Welcome to data"
+    print "Welcome to data"
     if request.method == 'GET':
     #    print "Get method"
         return myscript.data()
@@ -31,5 +31,5 @@ def data():
         return y 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True, port=443)
+    app.run(host='0.0.0.0', port=22000, debug=True)
     
