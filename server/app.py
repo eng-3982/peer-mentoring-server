@@ -1,7 +1,7 @@
 import sys
 import os
 from flask import Flask
-from flask import request
+from flask import request, make_response
 
 # Move to the directory that contains the interfacing script to import it
 # (I'm actually pretty proud of this line because it means I can call server.py from anywhere)
@@ -33,8 +33,9 @@ def data():
     if request.method == 'GET':
         # Print the key/value data in the database
         #
-        return  database.data()
-    
+        return database.data()
+
+
     # If the request method is POST
     #
     else:

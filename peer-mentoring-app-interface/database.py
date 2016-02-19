@@ -2,7 +2,7 @@ from flask import jsonify
 from pymongo import MongoClient
 
 client = MongoClient()
-db = client.primer
+db = client.db_00
 coll = db.dataset
 
 # define the function to print out all data 
