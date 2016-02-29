@@ -1,21 +1,27 @@
 #!/usr/bin/env python
 
-# File: app_v01.py
+# File: app_v02.py
 # Author: Daniel Douglas, Claire Durand
 
-import sys
-import os
+import sys, os
 from flask import Flask, request, Response, jsonify
-from flask_login import LoginManager, UserMixin, login_required
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from flask.ext.bcrypt import Bcrypt
+from models import User
 
 # Move to the directory that contains the interfacing script to import it
 # (I'm actually pretty proud of this line because it means I can call server.py from anywhere)
-sys.path.append(os.path.join(os.path.dirname(__file__),'..','peer-mentoring-app-interface'))
+sys.path.append(os.path.join(os.path.dirname(__file__),'..','app-interface'))
 import database
 
 # Create the application
 #
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('config.py')
+
+# Create the bcrypt object
+#
+bcrypt = Bcrypt(app)
 
 # Initialize login manager instance
 #
@@ -23,29 +29,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-# Define User class. User inherits from UserMixin class
-# which we will "overload" (C++ term)
-#
-class User(UserMixin):
-    # Import user data
-    #
-    user_database = database.data('users')
-
-    # Initialize class parameters
-    #
-    def __init__(self, username, password):
-        self.id = username
-        self.password = password
-
-    # Define a classmethod for easy repeatability
-    #
-    @classmethod
-    def get(cls, id):
-        return cls.user_database.get(id)
-
-
 # Provide method for login manager to load a user
-#
 @login_manager.request_loader
 def load_user(request):
     # Look for token in Authorization headers or request
@@ -60,31 +44,40 @@ def load_user(request):
     # Once we have the token, check for a match
     #
     if token is not None:
+        
         print 'token is ', token
-        username, password = token[0],token[1] # ASSUMING A NAIVE TOKEN
+        username, request_password = token[0],token[1] # ASSUMING A NAIVE TOKEN
         
         # get the user information from class parameters
         #
         user_entry = User.get(username)
         print 'user entry is ', user_entry
-        
+
+        # Create User() object from information
+        #        
         if (user_entry is not None):           
-            # Create User() object from information
-            #
-            user = User(user_entry['name'], user_entry['password'])
             
+            user = User(user_entry['name'], user_entry['password'])
             print 'user is ', user
             # If authentication info is correct, return user instance
+            # We also decrypt the database password here
             #
-            if (user.password == password):
+            if bcrypt.check_password_hash(user.password, request_password):
+               # login_user(user)
                 return user
         # If authenticaton fails, return None
         #
         return None
-            
+    
+
+# Logout user
+@app.route('/logout/')
+def logout():
+    logout_user()
+    return Response(response='Signed Out\n', status=200)
+
 
 # Default URL operations
-#
 @app.route('/')
 def home_page():
     
@@ -94,7 +87,6 @@ def home_page():
 
 
 # Data fetch and post operations
-#
 @app.route('/data/', methods=['POST', 'GET'])
 def data():
     
@@ -116,12 +108,13 @@ def data():
         #
         name = request.headers.get('Username')
         password = request.headers.get('Password')
-        print name
-        print type(name)
         # If both fields are present in the request,
         # add the user information to the database
         #
         if (name and password):
+            # Encrypt password
+            #
+            password = bcrypt.generate_password_hash(password)
             return database.post(name,password)
         else:
             # Raise error code 400=BAD REQUEST
@@ -130,7 +123,6 @@ def data():
 
 
 # Authenticated user operation
-#
 @app.route('/private/', methods=['GET', 'POST'])
 @login_required    # this line makes the route requre authentication
 def private():

@@ -15,3 +15,7 @@ Description: Split from app.py. Introduces login authentication functions
 File: app_v02.py
 Created: 25/Feb/2016
 Description: Expands login authentication functions. Introduces password encryption
+
+File: __init__.py
+Created: 29/Feb/2016
+Description: In expanding the app and modularizing the views, this file becomes implied
