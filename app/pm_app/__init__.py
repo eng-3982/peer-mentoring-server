@@ -11,5 +11,6 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
     
 
-import pm_app.views
-import pm_app.view.vlogin
+import pm_app.modules
+import pm_app.views.vlogin
+import pm_app.views.vdata

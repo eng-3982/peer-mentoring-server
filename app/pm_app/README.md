@@ -18,4 +18,5 @@ Description: Expands login authentication functions. Introduces password encrypt
 
 File: __init__.py
 Created: 29/Feb/2016
-Description: In expanding the app and modularizing the views, this file becomes implied
+Description: In expanding the app and modularizing the views, this file becomes implied.
+	     __init__.py is the most current version of app_vXX.py
