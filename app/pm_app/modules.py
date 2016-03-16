@@ -24,8 +24,6 @@ def home_page():
     return 'Welcome to Peer-Mentoring App\n'
 
 
-
-
 # Authenticated user operation
 @app.route('/private/', methods=['GET', 'POST'])
 @login_required    # this line makes the route requre authentication

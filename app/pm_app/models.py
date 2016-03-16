@@ -29,3 +29,6 @@ class User(UserMixin):
     @classmethod
     def get(cls, id):
         return cls.user_database.get(id)
+
+   # @classmethod
+    #def update(cls, 
