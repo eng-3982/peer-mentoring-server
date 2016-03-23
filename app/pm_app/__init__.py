@@ -13,7 +13,6 @@ app.config.from_pyfile('config.py')
 
 # Load the dependent modules
 #
-import pm_app.modules
 import pm_app.views.vlogin
 import pm_app.views.vdata
 import pm_app.views.vquery

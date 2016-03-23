@@ -48,6 +48,19 @@ def data():
             return Response(response="Required Field's Empty\n", status=400)
 
 
+# Fetch a single users' information
+@app.route('/data/<username>/', methods=['GET', 'POST'])
+@login_required
+def fetch_user(username):
+    print 'FETCHING USER'
+
+    # Pull up user info
+    #
+    profile = database.user_info(username)
+    print profile
+    return jsonify(profile)
+
+
 # Update user information
 @app.route('/data/update/', methods=['POST'])
 @login_required
