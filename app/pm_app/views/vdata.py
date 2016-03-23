@@ -45,20 +45,29 @@ def data():
         else:
             # Raise error code 400=BAD REQUEST
             #
-            return Response(response="Required Field's Empty", status=200)
+            return Response(response="Required Field's Empty\n", status=400)
+
 
 # Update user information
 @app.route('/data/update/', methods=['POST'])
 @login_required
 def update_info():
-    update_data = request.headers.get('Updates')
-    return dict(update_data)
+    
+    # Pull the data to be updated from the request headers
+    #
+    update_data = request.get_json()
+    print update_data,'\n'
+
+    return database.update_field(current_user.id, update_data)
+
 
 # Delete user instance
 @app.route('/data/rm/', methods=['POST'])
 @login_required
 def rm_instance():
-    # Get user name of the user to ELIMINATE
+    
+    # Get user name of the user to eliminate
+    #
     user_rm = request.headers.get("Username")
     database.rm_user(user_rm)
-    return Response(response="User removed", status=200)
+    return Response(response="User was removed.\n", status=200)

@@ -17,6 +17,11 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+@app.after_request
+def remove_if_invalid(response):
+    if "__invalidate__" in session:
+        response.delete_cookie(app.session_cookie_name)
+    return response
 
 # Provide method for login manager to load a user
 @login_manager.request_loader
@@ -34,20 +39,18 @@ def load_user_by_request(request):
     #
     if token is not None:
         
-        print 'token is ', token
         username, request_password = token[0],token[1] # ASSUMING A NAIVE TOKEN
         
         # get the user information from class parameters
         #
         user_entry = User.get(username)
-        print 'user entry is ', user_entry
 
         # Create User() object from information
         #        
         if (user_entry is not None):           
             
             user = User(user_entry['name'], user_entry['password'])
-            print 'user is ', user
+            
             # If authentication info is correct, return user instance
             # We also decrypt the database password here
             #
@@ -77,11 +80,13 @@ def unauthorized():
 @login_required    # this line makes the route requre authentication
 def login():
     usr = database.user_info(current_user.id)
-    print usr, '\n'
-    return jsonify(usr)
+    usr_json = jsonify(**usr)
+    return usr_json
 
 # Logout user
-@app.route('/logout/')
+@app.route('/logout/', methods=['POST'])
 def logout():
     logout_user()
+    session.clear()
+    session['__invalidate__'] = True
     return Response(response='Signed Out\n', status=200)

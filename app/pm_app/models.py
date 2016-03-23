@@ -14,6 +14,7 @@ from flask_login import UserMixin
 # which we will "overload" (C++ term)
 #
 class User(UserMixin):
+    
     # Import user data
     #
     user_database = database.data('users')
@@ -30,5 +31,6 @@ class User(UserMixin):
     def get(cls, id):
         return cls.user_database.get(id)
 
-   # @classmethod
-    #def update(cls, 
+    @classmethod
+    def set(cls, id, *kwargs):
+        return database.update_field(id, kwargs)
